@@ -1,6 +1,7 @@
 /*
 Kirito's Challenge 
 This Project uses a distance reader to display Hot, Warm, or Cold on an LCD based on the distance.
+Project Link: https://www.tinkercad.com/things/e971cQykq8r
 */
 
 #include <LiquidCrystal.h>

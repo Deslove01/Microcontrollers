@@ -1,0 +1,75 @@
+/*
+DHT11 Sensor with AC Fan
+*/
+
+#include <DHT.h>
+#include <LiquidCrystal.h>
+#define DHT_PIN 2
+#define DHT_TYPE DHT11
+
+DHT dht(DHT_PIN, DHT_TYPE);
+LiquidCrystal lcd_1(12, 11, 6, 5, 4, 3); 
+
+int Green=9; // Green LED
+int Red=8; // Red LED 
+int relay=13; //The relay pin
+
+void setup() 
+{
+  // Initialize serial communication
+  Serial.begin(9600);
+  Serial.println("DHTxx Test");
+
+  // Initialize DHT sensor
+  dht.begin();
+
+  pinMode(Green, OUTPUT); //Green produces light
+  pinMode(Red, OUTPUT); //Red produces light
+  pinMode(relay, OUTPUT); //Red produces light
+
+  lcd_1.begin(16, 2); // Two lines of text on the LCD
+}
+
+void loop() 
+{
+  // Wait for 2 seconds between measurements
+  delay(2000);
+
+  float temperatureCelsius = dht.readTemperature(); // Read temperature from DHT sensor
+  // Convert Celsius to Fahrenheit
+  float temperatureFahrenheit = (temperatureCelsius * 9.0 / 5.0) + 32.0; 
+
+  lcd_1.setCursor(0, 1); // Second row of the LCD
+  lcd_1.print("Temp: "); // Displays the degrees in Celsius on the LCD
+  lcd_1.print(temperatureCelsius); // Displays the degrees in Celsius on the LCD
+  lcd_1.print(" C"); // Displays C to after the number indicate Celsisus
+
+  Serial.print("Temperature (C): "); // Displays the degrees in Celsius on the LCD
+  Serial.print(temperatureCelsius); // Actual degrees in Celsius
+  Serial.print(" *C\t");
+
+  if(temperatureCelsius >= 30)  // When its greater than or equal to 30 degrees celsius the Green Led and AC Motor will run
+  {
+  digitalWrite(Green, HIGH);  // Green LED on
+  digitalWrite(Red, LOW);   // Red LED off
+  digitalWrite(relay, HIGH); // Relay on //Relay controls the AC fan
+  delay(500);             // 500ms delay
+
+  lcd_1.setCursor(0,0); // The area on the LCD wherebthe text will display
+  lcd_1.print("On!"); //This is what displays on the LCD when the AC fan is off.
+  }
+
+  if(temperatureCelsius < 30) // When its less than 30 degrees celsius the Red Led will be on and AC Motor is off
+  {
+  digitalWrite(Green, LOW);  // Green LED off
+  digitalWrite(Red, HIGH);   // Red LED on
+  digitalWrite(relay, LOW); //Relay off  //Relay controls the AC fan
+  delay(500);             // 500ms delay
+
+  lcd_1.setCursor(0,0); // The area on the LCD wherebthe text will display
+  lcd_1.print("Off"); //This is what displays on the LCD when the AC fan is off.
+  }
+
+  // Wait for 2 seconds before the next measurement
+  delay(2000);
+}

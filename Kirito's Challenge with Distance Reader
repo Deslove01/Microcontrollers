@@ -1,0 +1,82 @@
+/*
+Kirito's Challenge 
+This Project uses a distance reader to display Hot, Warm, or Cold on an LCD based on the distance.
+*/
+
+#include <LiquidCrystal.h>
+LiquidCrystal lcd_1(12, 11, 5, 4, 3, 2);
+
+int Red=13; // Red LED
+int Yellow=10; // Yellow LED
+int Blue=7; // Blue LED 
+
+float inches = 0;
+float cm = 0;
+
+long readUltrasonicDistance(int triggerPin, int echoPin)
+{
+  pinMode(triggerPin, OUTPUT);  // Clear the trigger
+  digitalWrite(triggerPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigger pin to HIGH state for 10 microseconds
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin, LOW);
+  pinMode(echoPin, INPUT);
+  // Reads the echo pin, and returns the sound wave travel time in microseconds
+  return pulseIn(echoPin, HIGH);
+}
+
+void setup()
+{
+  lcd_1.begin(16, 2); // Set up the number of columns and rows on the LCD
+  Serial.begin(9600);        //Communication between computer and ardiuno
+  pinMode(Red, OUTPUT);     //Red produces light
+  pinMode(Yellow, OUTPUT); //Yellow produces light
+  pinMode(Blue, OUTPUT);  //Blue produces light
+}
+
+void loop()
+{
+  cm = 0.01723 * readUltrasonicDistance(9, 8); // triger set as pin 9 and echo set as pin 8
+  inches = (cm / 2.54);
+  
+  if(inches <= 10)  // Red LED on between when distance is less than 10in. It is Hot.
+  {
+  digitalWrite(Red, HIGH);  // Red LED on
+  digitalWrite(Yellow, LOW);   // Yellow LED off
+  digitalWrite(Blue, LOW);   // Blue LED off
+  delay(500);             // 500ms delay
+    
+  lcd_1.setCursor(0,1); // The area on the LCD wherebthe text will display
+  lcd_1.print("Hot Watch Out"); //This is what displays on the LCD when the conditions are met.
+  }
+  
+  if(inches > 10 && inches < 15) // Yellow LED on between when distance is less than 10in. It is Warm.
+  {
+  digitalWrite(Red, LOW);  // Red LED off
+  digitalWrite(Yellow, HIGH);   // Yellow LED on
+  digitalWrite(Blue, LOW);   // Blue LED off
+  delay(500);             // 500ms delay
+    
+  lcd_1.setCursor(0,1); // The area on the LCD wherebthe text will display
+  lcd_1.print("Warm and Cozy"); //This is what displays on the LCD when the conditions are met.
+  }
+    
+  if(inches >= 15) // Blue LED on between when distance is less than 10in. It is Warm.
+  {
+  digitalWrite(Red, LOW);  // Red LED off
+  digitalWrite(Yellow, LOW);   // Yellow LED off
+  digitalWrite(Blue, HIGH);   // Blue LED on
+  delay(500);             // 500ms delay
+    
+  lcd_1.setCursor(0,1); // The area on the LCD wherebthe text will display
+  lcd_1.print("Cold Freezing"); //This is what displays on the LCD when the conditions are met.   
+  }
+     
+  else
+  {
+  Serial.println("LEDs are OFF"); 
+  //At any other distances not defined the LEDs are off
+  }
+}

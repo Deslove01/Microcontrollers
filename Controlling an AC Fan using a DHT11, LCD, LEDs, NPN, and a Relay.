@@ -1,5 +1,8 @@
 /*
 DHT11 Sensor with AC Fan
+Here is the Tinkercad link with the components set up. 
+Keep in mind the DHT11 sensor is not on the Tinkercad. I left a space where it would be.
+https://www.tinkercad.com/things/8UboQKSPPor
 */
 
 #include <DHT.h>

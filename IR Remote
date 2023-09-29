@@ -1,0 +1,83 @@
+/*
+In this project, an IR Remote will control a DC motor and LED
+Button 2 turns on the LED
+Button 3 turns off the LED
+Button 5 turns on the DC motor
+Button 6 turns off the DC motor
+The Power Button turns everything off.
+*/
+
+#include <IRremote.h>
+
+const int RECV_PIN = 3;
+IRrecv irrecv(RECV_PIN);
+decode_results results;
+
+const int led = 10;
+const int relay = 11;
+
+bool relayState = LOW; // Initialize relay state as OFF
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 200; // Adjust this value as needed
+
+
+void setup() 
+{
+  Serial.begin(9600);
+  irrecv.enableIRIn();
+  irrecv.blink13(true);
+  
+  pinMode(led, OUTPUT);
+  pinMode(relay, OUTPUT);
+}
+
+void loop() 
+{
+  if (irrecv.decode()) 
+  {
+    int receivedCode = irrecv.decodedIRData.command;
+    Serial.println(receivedCode, DEC);
+
+      // Check the received code and take action
+      switch (receivedCode) 
+     {
+        case 0: // Power Button
+          Serial.println("Turning LED and Relay OFF");
+          digitalWrite(led, LOW);     // Turn off the LED
+          digitalWrite(relay, LOW);   // Turn off the relay
+          relayState = LOW;           // Update relay state
+          break;
+
+        case 17: // Button 2
+          Serial.println("Turning LED ON");
+          digitalWrite(led, HIGH);    // Turn on the LED
+          break;
+
+        case 18: // Button 3
+          Serial.println("Turning LED OFF");
+          digitalWrite(led, LOW);     // Turn off the LED
+          break;
+
+        case 21: // Button 5
+          Serial.println("Turning Relay ON");
+          digitalWrite(relay, HIGH);  // Turn on the relay
+          relayState = HIGH;          // Update relay state
+          break;
+
+        case 22: // Button 6
+          Serial.println("Turning Relay OFF");
+          digitalWrite(relay, LOW);   // Turn off the relay
+          relayState = LOW;           // Update relay state
+          break;
+
+        default:
+          Serial.println("Unknown IR code");
+      }
+      
+      lastDebounceTime = millis(); // Record the last button press time
+    }
+    
+    irrecv.resume();
+  // Ensure the relay stays in the correct state
+  digitalWrite(relay, relayState);
+  }

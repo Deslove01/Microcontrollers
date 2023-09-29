@@ -1,0 +1,58 @@
+/*
+DHT11 and LCD
+This code displays on the LCD the Humidity and Temperature in F
+*/
+
+#include <DHT.h>
+#include <LiquidCrystal.h>
+#define DHT_PIN 2
+#define DHT_TYPE DHT11
+DHT dht(DHT_PIN, DHT_TYPE);
+LiquidCrystal lcd(12, 11, 6, 5, 4, 3);
+void setup()
+{
+// Initialize serial communication
+Serial.begin(9600);
+Serial.println("DHTxx Test");
+// Initialize DHT sensor
+dht.begin();
+// Initialize LCD
+lcd.begin(16, 2);
+lcd.setCursor(0, 0);
+lcd.print("Humidity: ");
+}
+void loop()
+{
+// Wait for 2 seconds between measurements
+delay(2000);
+// Read humidity and temperature from DHT sensor
+float humidity = dht.readHumidity();
+float temperatureCelsius = dht.readTemperature();
+// Check if the readings are valid
+if (isnan(humidity) || isnan(temperatureCelsius)) {
+Serial.println("Failed to read from DHT sensor!");
+return;
+}
+// Convert Celsius to Fahrenheit
+float temperatureFahrenheit = (temperatureCelsius * 9.0 / 5.0) + 32.0;
+// Update the LCD with humidity and temperature readings
+lcd.setCursor(10, 0);
+lcd.print(humidity);
+lcd.print(" %");
+lcd.setCursor(0, 1);
+lcd.print("Temp: ");
+lcd.print(temperatureFahrenheit);
+lcd.print(" F");
+// Print the readings to the serial monitor
+Serial.print("Humidity: ");
+Serial.print(humidity);
+Serial.print(" %\t");
+Serial.print("Temperature (C): ");
+Serial.print(temperatureCelsius);
+Serial.print(" *C\t");
+Serial.print("Temperature (F): ");
+Serial.print(temperatureFahrenheit);
+Serial.println(" *F");
+// Wait for 2 seconds before the next measurement
+delay(2000);
+}

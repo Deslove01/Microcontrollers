@@ -1,7 +1,7 @@
-*
+/*
 Thermometer with Thermistor and LCD
-
 */
+
 //Thermistor Code for both F and C
 #include <LiquidCrystal.h>
 int Tempurature = 0;

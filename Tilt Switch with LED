@@ -1,0 +1,24 @@
+/*
+Tilt Switch with LED
+More Instructions: https://www.instructables.com/TILT-SWITCH-USING-ARDUINO-UNO-R3/
+*/
+int Blue = 2;
+int Tilt= 13;
+void setup()
+{
+pinMode(Blue,OUTPUT);
+pinMode(Tilt,INPUT);
+digitalWrite(Tilt, HIGH);
+}
+void loop()
+{
+int digitalVal = digitalRead(Tilt);
+if(HIGH == digitalVal)
+{
+digitalWrite(Blue,LOW);
+}
+else
+{
+digitalWrite(Blue,HIGH);
+}
+}

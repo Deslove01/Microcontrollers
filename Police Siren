@@ -1,0 +1,64 @@
+/*
+Buzzer and Police Siren with a Motor
+*/
+
+int buzzer = 12; //Piezo Buzzer
+int Red = 8;  //Red LED
+int Blue = 6; //Blue LED
+int beep = 500; //Delay time
+int Tilt = 2; //Tilt Switch
+
+int F5=700;  //Frequency of Buzzer
+int C5=724;  //Frequency of Buzzer
+
+//This section controls the motor
+int speedPin = 7;
+int tiltPin = 2;
+int dir1 = 5;
+int dir2 = 4;
+int mSpeed = 200;
+int tiltVal ;
+
+void setup() 
+{
+  pinMode(buzzer, OUTPUT);  //Buzzer to make a sound
+  pinMode(Red, OUTPUT); // Turns on
+  pinMode(Blue, OUTPUT); //Turns on
+  
+  pinMode(speedPin, OUTPUT);  //Motor on
+  pinMode(dir1, OUTPUT);   // Motor on
+  pinMode(dir2, OUTPUT);   // Motor on
+  Serial.begin(9600);  // communication between the computer and arduino
+  pinMode(tiltPin , INPUT); // tells when to turn on or off
+  digitalWrite(tiltPin , HIGH); // to avoid uisng pull up resistor 
+} 
+
+void loop() 
+{
+  //this controls when the motor is on
+  digitalWrite(dir1,LOW);
+  digitalWrite(dir2,HIGH);
+  tiltVal=digitalRead(tiltPin);
+  Serial.println(tiltVal);
+  
+  if (tiltVal == 0)
+  {
+  digitalWrite(speedPin , mSpeed); //motor on
+  digitalWrite(buzzer, HIGH);  // Buzzer on
+  digitalWrite(Red, HIGH);   // RED LED on
+  tone(buzzer, F5, beep); // Frequency at 700
+  digitalWrite(Blue, LOW); //Blue LED off
+  delay(beep);
+    
+  digitalWrite(buzzer, LOW);  // Buzzer off
+  digitalWrite(Red, LOW);   // RED LED on
+  tone(buzzer, C5, beep); // Frequency at 724
+  digitalWrite(Blue, HIGH); //Blue LED on
+  delay(beep);
+  }
+  
+  else
+  {
+    digitalWrite(speedPin , 0); //motor off
+  }
+}
